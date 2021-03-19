@@ -1,0 +1,26 @@
+canvas#gameCanvas{
+	width: 80%;
+	border: black 1px solid;
+}
+
+.button {
+    background-color: #C0C0C0;
+    border: none;
+    box-shadow: 0 9px#505050;
+    padding: 30px;
+    text-align: center;
+    font-size: 28px;
+}
+
+.button:hover {
+    background-color: #3F3F3F;
+}
+
+.button:active {
+    box-shadow: 0 5px #3D3D3D;
+    transform: translateY(5px);
+}
+
+.round {
+    border-radius: 100%;
+}

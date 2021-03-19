@@ -1,0 +1,37 @@
+<!doctype html>
+
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<title>Game</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Game Prototype">
+    <meta name="author" content="Stephen Hurley">
+	
+	<!--StyleSheet-->
+    <link rel="stylesheet" href="./style/styleSheet.css">
+    <link href='https://fonts.googleapis.com/css?family=Orbitron' rel='stylesheet' type='text/css'>
+</head>
+
+<body>
+	<canvas tabindex="1" id="gameCanvas">
+		Canvas not working
+	</canvas>
+	
+	<table>
+        <tbody>
+            <tr>
+                <td>&nbsp;</td>
+                <td><button onclick="headClicked()" id="headButton" class="button round">HEAD</button></td>
+				<td><button onclick="bodyClicked()" id="bodyButton" class="button round">BODY</button></td>
+				<td><button onclick="legsClicked()" id="legsButton" class="button round">LEGS</button></td>
+                <td>&nbsp;</td>
+            </tr>
+        </tbody>
+    </table>
+	
+</body>
+
+ <!--JavaScript Files-->
+ <script src="./scripts/gameScript.js"></script>
