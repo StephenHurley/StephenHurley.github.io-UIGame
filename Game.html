@@ -14,19 +14,20 @@
     <link href='https://fonts.googleapis.com/css?family=Orbitron' rel='stylesheet' type='text/css'>
 </head>
 
-<body>
-	<canvas tabindex="1" id="gameCanvas">
+<body onload="splitFunction()">
+
+	<h1><span id="playerName"</span></h1>
+	
+<canvas tabindex="1" id="gameCanvas">
 		Canvas not working
-	</canvas>
+</canvas>
 	
 	<table>
         <tbody>
             <tr>
-                <td>&nbsp;</td>
                 <td><button onclick="headClicked()" id="headButton" class="button round">HEAD</button></td>
 				<td><button onclick="bodyClicked()" id="bodyButton" class="button round">BODY</button></td>
 				<td><button onclick="legsClicked()" id="legsButton" class="button round">LEGS</button></td>
-                <td>&nbsp;</td>
             </tr>
         </tbody>
     </table>

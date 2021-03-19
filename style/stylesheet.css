@@ -1,13 +1,14 @@
 canvas#gameCanvas{
-	width: 80%;
+	width: 60%;
 	border: black 1px solid;
 }
 
 .button {
+	
     background-color: #C0C0C0;
     border: none;
     box-shadow: 0 9px#505050;
-    padding: 30px;
+    padding: 10px;
     text-align: center;
     font-size: 28px;
 }
@@ -22,5 +23,5 @@ canvas#gameCanvas{
 }
 
 .round {
-    border-radius: 100%;
+    border-radius: 50%;
 }
