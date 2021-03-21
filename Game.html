@@ -16,18 +16,25 @@
 
 <body onload="splitFunction()">
 
-	<h1><span id="playerName"</span></h1>
+<table id ="healthBarTable">
+	<tbody>
+		<tr>
+			<th><span id="playerName"</span></th>
+			<th><span id="enemyName"</span></th>
+		</tr>
+	</tbody>
+</table>
 	
 <canvas tabindex="1" id="gameCanvas">
 		Canvas not working
 </canvas>
 	
-	<table>
+	<table id="bodyButtonsTable">
         <tbody>
             <tr>
-                <td><button onclick="headClicked()" id="headButton" class="button round">HEAD</button></td>
-				<td><button onclick="bodyClicked()" id="bodyButton" class="button round">BODY</button></td>
-				<td><button onclick="legsClicked()" id="legsButton" class="button round">LEGS</button></td>
+                <th><button onclick="headClicked()" id="headButton" class="button round">HEAD</button></th>
+				<th><button onclick="bodyClicked()" id="bodyButton" class="button round">BODY</button></th>
+				<th><button onclick="legsClicked()" id="legsButton" class="button round">LEGS</button></th>
             </tr>
         </tbody>
     </table>
