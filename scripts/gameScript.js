@@ -50,7 +50,7 @@ var enemy = new enemyEntity("Mr.Stache", enemyImage, 10)
  //game starts here
  window.requestAnimationFrame(gameLoop);
 
-// update game world
+// update animations
 function update()
 {
 	// this will be used for animation
