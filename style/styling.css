@@ -27,6 +27,10 @@ body
 {
 	width: 100%;
 }
+#movementButtonsTable
+{
+	width: 100%;
+}
 
 .button 
 {

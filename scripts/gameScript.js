@@ -2,18 +2,45 @@
 // background
 var combatScreenImage = new Image();
 combatScreenImage.src = "./assests/Combat_Screen.png";
+var overWorldImage = new Image();
+overWorldImage.src = "./assests/OverWorld.png";
 
 // player
 var playerImage = new Image();
 playerImage.src = "./assests/player.png"
+var playerIconImage = new Image();
+playerIconImage.src = "./assests/player_icon.png"
 
 // enemy
 var enemyImage = new Image();
 enemyImage.src = "./assests/enemy.png"
+var enemyIconImage = new Image();
+enemyIconImage.src = "./assests/enemy_icon.png"
 
 // set up canvas
 var canvas = document.getElementById("gameCanvas");
 var context = canvas.getContext("2d");
+
+// bool to control when we are in combat or the overworld
+var inCombat = false;
+
+// init our "grid" for overworld
+var gridCoordinatesX = new Array(10);
+var gridCoordinatesY = new Array(10);
+console.log(gridCoordinatesX.length)
+console.log(gridCoordinatesY.length)
+
+for (i = 0; i < gridCoordinatesX.length; i++)
+{
+	gridCoordinatesX[i] = 80 * i
+	//console.log(gridCoordinatesX[i])
+}
+
+for (i = 0; i < gridCoordinatesY.length; i++)
+{
+	gridCoordinatesY[i] = 60 * i
+	//console.log(gridCoordinatesX[i])
+}
 
 combatScreenImage.onload = function()
 {
@@ -22,30 +49,44 @@ combatScreenImage.onload = function()
 }
 
 // player entity set up and creation
-function playerEntity(name, image, health) 
+function playerEntity(name, image, icon, health) 
 {
     this.name = name;
     this.img = image;
+	this.icon = icon;
     this.health = health;
     this.x = 100; 
     this.y = 150; 
+	this.iconX = gridCoordinatesX[1];
+	this.iconY = gridCoordinatesY[1];
+	this.XIndex = 1;
+	this.YIndex = 1;
 	this.isAlive = true;
-	this.choiceMade = false;
 	this.buttonSelected = "NONE"; // default value
 }
-var player = new playerEntity("Default", playerImage, 20) // player name is found through split function
+var player = new playerEntity("Default", playerImage, playerIconImage, 20) // player name is found through split function
 
-// enemy entity set up and creation
-function enemyEntity(name, image, health) 
+// enemy entities set up and creation
+function enemyEntity(name, image, icon, health) 
 {
     this.name = name;
     this.img = image;
+	this.icon = icon;
 	this.health = health;	
     this.x = 500;
     this.y = 150;
+	this.iconX = gridCoordinatesX[5];
+	this.iconY = gridCoordinatesY[5];
+	this.XIndex = 5;
+	this.YIndex = 5;
+	this.isAlive = true;
 	this.buttonSelected = "NONE"; 
 }
-var enemy = new enemyEntity("Mr.Stache", enemyImage, 10)
+var enemy = new enemyEntity("Mr.Stache", enemyImage, enemyIconImage, 4)
+var grunt = new enemyEntity("Grunt", enemyImage, enemyIconImage, 10)
+var lackey = new enemyEntity("Lacky", enemyImage, enemyIconImage, 10)
+
+var enemies = [enemy,grunt,lackey];
 
  //game starts here
  window.requestAnimationFrame(gameLoop);
@@ -54,7 +95,7 @@ var enemy = new enemyEntity("Mr.Stache", enemyImage, 10)
 function update()
 {
 	// this will be used for animation
-	console.log("update")
+	//console.log("update")
 }
 
 function draw()
@@ -66,16 +107,32 @@ function draw()
 	
 	context.clearRect(0, 0, canvas.width, canvas.height);
 	
-	if (player.isAlive)
+	if (inCombat)
 	{
-		context.drawImage(combatScreenImage, 0, 0 );
-		context.drawImage(player.img, player.x, player.y);
-		context.drawImage(enemy.img, enemy.x, enemy.y);
-		drawHealthbars();
+		if (player.isAlive)
+		{
+			context.drawImage(combatScreenImage, 0, 0 );
+			context.drawImage(player.img, player.x, player.y);
+			context.drawImage(enemy.img, enemy.x, enemy.y);
+			drawHealthbars();
+		}
+		else
+		{
+			context.fillText("GAME OVER SCREEN HERE", canvas.width / 4 , canvas.height / 2)
+		}
 	}
 	else
 	{
-		context.fillText("GAME OVER SCREEN HERE", canvas.width / 4 , canvas.height / 2)
+		context.drawImage(overWorldImage, 0, 0 );
+		context.drawImage(player.icon, player.iconX, player.iconY);
+		
+		if (enemy.isAlive)
+		{
+			context.drawImage(enemy.icon, enemy.iconX, enemy.iconY);
+		}
+		
+		//console.log("X pos = " + player.iconX)
+		//console.log("Y pos = " + player.iconY)
 	}
 }
 
@@ -208,22 +265,108 @@ function processGameLogic()
 	{
 		player.isAlive = false;
 	}
+	
+	if (enemy.health <=0)
+	{
+		enemy.isAlive = false;
+		inCombat = false;
+	}
+}
+
+function checkforBattle()
+{
+	if (enemy.isAlive)
+	{
+		if (player.iconX == enemy.iconX && player.iconY == enemy.iconY)
+		{
+			inCombat = true;
+		}
+	}
 }
 
 function headClicked()
 {
-	player.buttonSelected = "HEAD";
-	processGameLogic();
+	if (inCombat)
+	{
+		player.buttonSelected = "HEAD";
+		processGameLogic();
+	}
 }
 
 function bodyClicked()
 {
-	player.buttonSelected = "BODY";
-	processGameLogic();
+	if (inCombat)
+	{
+		player.buttonSelected = "BODY";
+		processGameLogic();
+	}
 }
 
 function legsClicked()
 {
-	player.buttonSelected = "LEGS";
-	processGameLogic();
+	if (inCombat)
+	{
+		player.buttonSelected = "LEGS";
+		processGameLogic();
+	}
+}
+
+function downClicked()
+{
+	if (inCombat == false)
+	{
+		player.YIndex++
+		if (player.YIndex > 9)
+		{
+			alert("Invalid move!")
+			player.YIndex--
+		}
+		player.iconY = gridCoordinatesY[player.YIndex]
+		checkforBattle()
+	}
+}
+
+function upClicked()
+{
+	if (inCombat == false)
+	{
+		player.YIndex--
+		if (player.YIndex < 0)
+		{
+			alert("Invalid move!")
+			player.YIndex++
+		}
+		player.iconY = gridCoordinatesY[player.YIndex]
+		checkforBattle()
+	}
+}
+
+function rightClicked()
+{
+	if (inCombat == false)
+	{
+		player.XIndex++
+		if (player.XIndex > 9)
+		{
+			alert("Invalid move!")
+			player.XIndex--
+		}
+		player.iconX = gridCoordinatesX[player.XIndex]
+		checkforBattle()
+	}
+}
+
+function leftClicked()
+{
+	if (inCombat == false)
+	{
+		player.XIndex--
+		if (player.XIndex < 0)
+		{
+			alert("Invalid move!")
+			player.XIndex++
+		}
+		player.iconX = gridCoordinatesX[player.XIndex]
+		checkforBattle()
+	}
 }
