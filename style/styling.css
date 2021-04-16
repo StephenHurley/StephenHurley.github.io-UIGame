@@ -25,11 +25,13 @@ body
 
 #bodyButtonsTable
 {
-	width: 170%;
+	float: right;
+	width: 20%;
 }
 #movementButtonsTable
 {
-	width: 30%;
+	width: 80%;
+	float: left;
 }
 
 .button 
