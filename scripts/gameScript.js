@@ -67,7 +67,7 @@ function playerEntity(name, image, icon, health)
 var player = new playerEntity("Default", playerImage, playerIconImage, 20) // player name is found through split function
 
 // enemy entities set up and creation
-function enemyEntity(name, image, icon, health) 
+function enemyEntity(name, image, icon, gridX, gridY, health, healthBarFill) 
 {
     this.name = name;
     this.img = image;
@@ -75,16 +75,19 @@ function enemyEntity(name, image, icon, health)
 	this.health = health;	
     this.x = 500;
     this.y = 150;
-	this.iconX = gridCoordinatesX[5];
-	this.iconY = gridCoordinatesY[5];
+	this.iconX = gridCoordinatesX[gridX];
+	this.iconY = gridCoordinatesY[gridY];
 	this.XIndex = 5;
 	this.YIndex = 5;
 	this.isAlive = true;
 	this.buttonSelected = "NONE"; 
+	this.fightingPlayer = false;
+	
+	this.healthBarFill = healthBarFill;
 }
-var enemy = new enemyEntity("Mr.Stache", enemyImage, enemyIconImage, 4)
-var grunt = new enemyEntity("Grunt", enemyImage, enemyIconImage, 10)
-var lackey = new enemyEntity("Lacky", enemyImage, enemyIconImage, 10)
+var enemy = new enemyEntity("Mr.Stache", enemyImage, enemyIconImage, 8, 8, 10, 20)
+var grunt = new enemyEntity("Grunt", enemyImage, enemyIconImage, 5, 5 , 5, 40)
+var lackey = new enemyEntity("Lacky", enemyImage, enemyIconImage, 3, 7, 8, 25)
 
 var enemies = [enemy,grunt,lackey];
 
@@ -113,8 +116,15 @@ function draw()
 		{
 			context.drawImage(combatScreenImage, 0, 0 );
 			context.drawImage(player.img, player.x, player.y);
-			context.drawImage(enemy.img, enemy.x, enemy.y);
-			drawHealthbars();
+			
+				for (i = 0; i < enemies.length; i++)
+				{
+					if (enemies[i].fightingPlayer == true)
+					{
+						context.drawImage(enemies[i].img, enemies[i].x, enemies[i].y);
+						drawHealthbars(i);
+					}
+				}
 		}
 		else
 		{
@@ -126,9 +136,12 @@ function draw()
 		context.drawImage(overWorldImage, 0, 0 );
 		context.drawImage(player.icon, player.iconX, player.iconY);
 		
-		if (enemy.isAlive)
+		for (i = 0; i < enemies.length; i++)
 		{
-			context.drawImage(enemy.icon, enemy.iconX, enemy.iconY);
+			if (enemies[i].isAlive)
+			{
+				context.drawImage(enemies[i].icon, enemies[i].iconX, enemies[i].iconY);
+			}
 		}
 		
 		//console.log("X pos = " + player.iconX)
@@ -145,7 +158,7 @@ function gameLoop()
 	
 }
 
-function drawHealthbars() 
+function drawHealthbars(i) 
 {
   var width = 200;
   var height = 20;
@@ -164,12 +177,13 @@ function drawHealthbars()
   // enemy health bar
   // Draw the background and name 
   context.fillStyle = "#000000";
-  context.fillText(enemy.name, enemy.x, enemy.y -40)
-  context.fillRect(enemy.x, enemy.y - 25, width, height);
+  context.fillText(enemies[i].name, enemies[i].x, enemies[i].y -40)
+  context.fillRect(enemies[i].x, enemies[i].y - 25, width, height);
   // Draw the filled portion of the bar
   context.fillStyle = "#00FF00";
-  fillVal = enemy.health * 20 // 20 * 10 = 200, enough to fill a full health bar
-  context.fillRect(enemy.x, enemy.y - 25, fillVal, height);
+  
+  fillVal = enemies[i].health * enemies[i].healthBarFill;
+  context.fillRect(enemies[i].x, enemies[i].y - 25, fillVal, height);
   
 }
 
@@ -191,95 +205,105 @@ function processGameLogic()
 {
 	var randomEnemyChoice = getRandomInt(3) // generate a number between 0 and 2 inclusive to determine enemy choice
 	
-	// set enemies button selected
-	if (randomEnemyChoice == 0)
+	for (i = 0; i < enemies.length; i++)
 	{
-		enemy.buttonSelected = "HEAD"
-	}
-	if (randomEnemyChoice == 1)
-	{
-		enemy.buttonSelected = "BODY"
-	}
-	if (randomEnemyChoice == 2)
-	{
-		enemy.buttonSelected = "LEGS"
-	}
+		if (enemies[i].fightingPlayer == true)
+		{
+			if (randomEnemyChoice == 0)
+			{
+				enemies[i].buttonSelected = "HEAD"
+			}
+			if (randomEnemyChoice == 1)
+			{
+				enemies[i].buttonSelected = "BODY"
+			}
+			if (randomEnemyChoice == 2)
+			{
+				enemies[i].buttonSelected = "LEGS"
+			}
 	
-	// player picked head
-	if (player.buttonSelected == "HEAD")
-	{
-		if (enemy.buttonSelected == "HEAD")
-		{
-			// parried, no update
+			// player picked head
+			if (player.buttonSelected == "HEAD")
+			{
+				if (enemies[i].buttonSelected == "HEAD")
+				{
+					// parried, no update
+				}
+				if (enemies[i].buttonSelected == "BODY")
+				{
+					enemies[i].health -= 2
+				}
+				if (enemies[i].buttonSelected == "LEGS")
+				{
+					player.health -= 2
+				}
+			}
+			
+			// player picked body
+			if (player.buttonSelected == "BODY")
+			{
+				if (enemies[i].buttonSelected == "HEAD")
+				{
+					player.health -= 2
+				}
+				if (enemies[i].buttonSelected == "BODY")
+				{
+					// parried, no update
+				}
+				if (enemies[i].buttonSelected == "LEGS")
+				{
+					enemies[i].health -= 2
+				}
+			}
+		
+			// player picked legs
+			if (player.buttonSelected == "LEGS")
+			{
+				if (enemies[i].buttonSelected == "HEAD")
+				{
+					enemies[i].health -= 2
+				}
+				if (enemies[i].buttonSelected == "BODY")
+				{
+					player.health -= 2
+				}
+				if (enemies[i].buttonSelected == "LEGS")
+				{
+					// parried, no update
+				}
+			}
+		
+			// debug alert
+			alert("Player picked: " + player.buttonSelected + " Enemy picked: " + enemies[i].buttonSelected)
+			player.buttonSelected = "NONE"
+			enemies[i].buttonSelected = "NONE"
+		
+			if (player.health <= 0)
+			{
+				player.isAlive = false;
+			}
+			
+			if (enemies[i].health <=0)
+			{
+				enemies[i].isAlive = false;
+				enemies[i].fightingPlayer = false;
+				inCombat = false;
+			}
 		}
-		if (enemy.buttonSelected == "BODY")
-		{
-			enemy.health -= 2
-		}
-		if (enemy.buttonSelected == "LEGS")
-		{
-			player.health -= 2
-		}
-	}
-	
-	// player picked body
-	if (player.buttonSelected == "BODY")
-	{
-		if (enemy.buttonSelected == "HEAD")
-		{
-			player.health -= 2
-		}
-		if (enemy.buttonSelected == "BODY")
-		{
-			// parried, no update
-		}
-		if (enemy.buttonSelected == "LEGS")
-		{
-			enemy.health -= 2
-		}
-	}
-	
-	// player picked legs
-	if (player.buttonSelected == "LEGS")
-	{
-		if (enemy.buttonSelected == "HEAD")
-		{
-			enemy.health -= 2
-		}
-		if (enemy.buttonSelected == "BODY")
-		{
-			player.health -= 2
-		}
-		if (enemy.buttonSelected == "LEGS")
-		{
-			// parried, no update
-		}
-	}
-	
-	// debug alert
-	alert("Player picked: " + player.buttonSelected + " Enemy picked: " + enemy.buttonSelected)
-	player.buttonSelected = "NONE"
-	enemy.buttonSelected = "NONE"
-	
-	if (player.health <= 0)
-	{
-		player.isAlive = false;
-	}
-	
-	if (enemy.health <=0)
-	{
-		enemy.isAlive = false;
-		inCombat = false;
 	}
 }
 
 function checkforBattle()
 {
-	if (enemy.isAlive)
+	for (i = 0; i < enemies.length; i++)
 	{
-		if (player.iconX == enemy.iconX && player.iconY == enemy.iconY)
+		if (enemies[i].isAlive)
 		{
-			inCombat = true;
+			if (player.iconX == enemies[i].iconX && player.iconY == enemies[i].iconY)
+			{
+				inCombat = true;
+				enemies[i].fightingPlayer = true;
+			}
 		}
 	}
 }
