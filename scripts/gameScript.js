@@ -18,8 +18,8 @@ var enemyIconImage = new Image();
 enemyIconImage.src = "./assests/enemy_icon.png"
 
 // mrStache
-var enemyImage = new Image();
-enemyImage.src = "./assests/enemy.png"
+var mrStacheImage = new Image();
+enemyImage.src = "./assests/mr_stache_img.png"
 var mrStacheIconImage = new Image();
 mrStacheIconImage.src = "./assests/mr_stache_icon.png"
 
@@ -29,6 +29,8 @@ var context = canvas.getContext("2d");
 
 // bool to control when we are in combat or the overworld
 var inCombat = false;
+
+var gameWon = false;
 
 // init our "grid" for overworld
 var gridCoordinatesX = new Array(10);
@@ -61,7 +63,7 @@ function playerEntity(name, image, icon, health)
     this.img = image;
 	this.icon = icon;
     this.health = health;
-    this.x = 100; 
+    this.x = 190; 
     this.y = 150; 
 	this.iconX = gridCoordinatesX[1];
 	this.iconY = gridCoordinatesY[1];
@@ -70,6 +72,9 @@ function playerEntity(name, image, icon, health)
 	this.isAlive = true;
 	this.numOfKills = 0;
 	this.buttonSelected = "NONE"; // default value
+	
+	this.currentFrame = 3;
+	this.numFrames = 4;
 }
 var player = new playerEntity("Default", playerImage, playerIconImage, 20) // player name is found through split function
 
@@ -80,7 +85,7 @@ function enemyEntity(name, image, icon, gridX, gridY, health, healthBarFill)
     this.img = image;
 	this.icon = icon;
 	this.health = health;	
-    this.x = 500;
+    this.x = 400;
     this.y = 150;
 	this.iconX = gridCoordinatesX[gridX];
 	this.iconY = gridCoordinatesY[gridY];
@@ -89,6 +94,9 @@ function enemyEntity(name, image, icon, gridX, gridY, health, healthBarFill)
 	this.isAlive = true;
 	this.buttonSelected = "NONE"; 
 	this.fightingPlayer = false;
+	
+	this.currentFrame = 3;
+	this.numFrames = 4;
 	
 	this.healthBarFill = healthBarFill;
 }
@@ -102,19 +110,6 @@ var enemies = [mrStache, grunt, lackey];
 
  //game starts here
  window.requestAnimationFrame(gameLoop);
-
-// update animations
-function update()
-{
-	if (player.numOfKills == enemies.length)
-	{
-		console.log("You win!")
-	}
-	// this will be used for animation
-	//console.log("update")
-	
-	//animateIcons();
-}
 
 var icon_frames = 2;
 var currentFrame = 0;
@@ -159,20 +154,23 @@ function draw()
 		if (player.isAlive)
 		{
 			context.drawImage(combatScreenImage, 0, 0 );
-			context.drawImage(player.img, player.x, player.y);
+	
+			context.drawImage(player.img, (player.img.width / player.numFrames) * player.currentFrame, 0, 200, 400, player.x, player.y, 200, 400);
 			
 				for (i = 0; i < enemies.length; i++)
 				{
 					if (enemies[i].fightingPlayer == true)
 					{
-						context.drawImage(enemies[i].img, enemies[i].x, enemies[i].y);
+						// Draw sprite frame
+						context.drawImage(enemies[i].img, (enemies[i].img.width / enemies[i].numFrames) * enemies[i].currentFrame, 0, 200, 400, enemies[i].x, enemies[i].y, 200, 400);
 						drawHealthbars(i);
 					}
 				}
 		}
 		else
 		{
-			context.fillText("GAME OVER SCREEN HERE", canvas.width / 4 , canvas.height / 2)
+			context.drawImage(combatScreenImage, 0, 0 );
+			context.fillText("GAME OVER, YOU DIED", canvas.width / 4 , canvas.height / 2)
 		}
 	}
 	else
@@ -187,10 +185,8 @@ function draw()
 // after game start, loop
 function gameLoop()
 {
-	update();
     draw();
     window.requestAnimationFrame(gameLoop);
-	
 }
 
 function drawHealthbars(i) 
@@ -247,19 +243,23 @@ function processGameLogic()
 			if (randomEnemyChoice == 0)
 			{
 				enemies[i].buttonSelected = "HEAD"
+				enemies[i].currentFrame = 0
 			}
 			if (randomEnemyChoice == 1)
 			{
 				enemies[i].buttonSelected = "BODY"
+				enemies[i].currentFrame = 1
 			}
 			if (randomEnemyChoice == 2)
 			{
 				enemies[i].buttonSelected = "LEGS"
+				enemies[i].currentFrame = 2
 			}
 	
 			// player picked head
 			if (player.buttonSelected == "HEAD")
 			{
+				player.currentFrame = 0
 				if (enemies[i].buttonSelected == "HEAD")
 				{
 					// parried, no update
@@ -277,6 +277,8 @@ function processGameLogic()
 			// player picked body
 			if (player.buttonSelected == "BODY")
 			{
+				player.currentFrame = 1
+				
 				if (enemies[i].buttonSelected == "HEAD")
 				{
 					player.health -= 2
@@ -294,6 +296,8 @@ function processGameLogic()
 			// player picked legs
 			if (player.buttonSelected == "LEGS")
 			{
+				player.currentFrame = 2
+				
 				if (enemies[i].buttonSelected == "HEAD")
 				{
 					enemies[i].health -= 2
