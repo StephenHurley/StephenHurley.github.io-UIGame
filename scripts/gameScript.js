@@ -17,6 +17,12 @@ enemyImage.src = "./assests/enemy.png"
 var enemyIconImage = new Image();
 enemyIconImage.src = "./assests/enemy_icon.png"
 
+// mrStache
+var enemyImage = new Image();
+enemyImage.src = "./assests/enemy.png"
+var mrStacheIconImage = new Image();
+mrStacheIconImage.src = "./assests/mr_stache_icon.png"
+
 // set up canvas
 var canvas = document.getElementById("gameCanvas");
 var context = canvas.getContext("2d");
@@ -62,6 +68,7 @@ function playerEntity(name, image, icon, health)
 	this.XIndex = 1;
 	this.YIndex = 1;
 	this.isAlive = true;
+	this.numOfKills = 0;
 	this.buttonSelected = "NONE"; // default value
 }
 var player = new playerEntity("Default", playerImage, playerIconImage, 20) // player name is found through split function
@@ -85,11 +92,13 @@ function enemyEntity(name, image, icon, gridX, gridY, health, healthBarFill)
 	
 	this.healthBarFill = healthBarFill;
 }
-var enemy = new enemyEntity("Mr.Stache", enemyImage, enemyIconImage, 8, 8, 10, 20)
+
+var mrStache = new enemyEntity("Mr.Stache", enemyImage, mrStacheIconImage, 8, 8, 10, 20)
 var grunt = new enemyEntity("Grunt", enemyImage, enemyIconImage, 5, 5 , 5, 40)
 var lackey = new enemyEntity("Lacky", enemyImage, enemyIconImage, 3, 7, 8, 25)
 
-var enemies = [enemy,grunt,lackey];
+//var enemies = [enemy,grunt,lackey];
+var enemies = [mrStache, grunt, lackey];
 
  //game starts here
  window.requestAnimationFrame(gameLoop);
@@ -97,8 +106,43 @@ var enemies = [enemy,grunt,lackey];
 // update animations
 function update()
 {
+	if (player.numOfKills == enemies.length)
+	{
+		console.log("You win!")
+	}
 	// this will be used for animation
 	//console.log("update")
+	
+	//animateIcons();
+}
+
+var icon_frames = 2;
+var currentFrame = 0;
+// Initial time set
+var initial = new Date().getTime();
+var current; // current time
+
+function animateIcons() {
+	
+    current = new Date().getTime(); // update current
+	
+    if (current - initial >= 500) 
+	{ // check is greater that 200 ms
+        currentFrame = (currentFrame + 1) % icon_frames; // update frame
+        initial = current; // reset initial
+    } 
+
+	for (i = 0; i < enemies.length; i++)
+	{
+		if (enemies[i].isAlive)
+		{
+			context.drawImage(enemies[i].icon, (enemies[i].icon.width / icon_frames) * currentFrame, 0, 80, 60, enemies[i].iconX, enemies[i].iconY, 80, 60);
+		}
+	}
+	
+    // Draw sprite frame
+    context.drawImage(player.icon, (player.icon.width / icon_frames) * currentFrame, 0, 80, 60, player.iconX, player.iconY, 80, 60);
+
 }
 
 function draw()
@@ -134,16 +178,7 @@ function draw()
 	else
 	{
 		context.drawImage(overWorldImage, 0, 0 );
-		context.drawImage(player.icon, player.iconX, player.iconY);
-		
-		for (i = 0; i < enemies.length; i++)
-		{
-			if (enemies[i].isAlive)
-			{
-				context.drawImage(enemies[i].icon, enemies[i].iconX, enemies[i].iconY);
-			}
-		}
-		
+		animateIcons();
 		//console.log("X pos = " + player.iconX)
 		//console.log("Y pos = " + player.iconY)
 	}
@@ -152,7 +187,7 @@ function draw()
 // after game start, loop
 function gameLoop()
 {
-	//update();
+	update();
     draw();
     window.requestAnimationFrame(gameLoop);
 	
@@ -287,6 +322,7 @@ function processGameLogic()
 			{
 				enemies[i].isAlive = false;
 				enemies[i].fightingPlayer = false;
+				player.numOfKills = player.numOfKills + 1;
 				inCombat = false;
 			}
 		}
