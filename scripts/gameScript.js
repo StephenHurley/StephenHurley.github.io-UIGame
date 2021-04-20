@@ -313,7 +313,9 @@ function processGameLogic()
 			}
 		
 			// debug alert
-			alert("Player picked: " + player.buttonSelected + " Enemy picked: " + enemies[i].buttonSelected)
+			// alert("Player picked: " + player.buttonSelected + " Enemy picked: " + enemies[i].buttonSelected)
+			
+			console.log("Player picked: " + player.buttonSelected + " Enemy picked: " + enemies[i].buttonSelected)
 			player.buttonSelected = "NONE"
 			enemies[i].buttonSelected = "NONE"
 		
