@@ -5,6 +5,7 @@ var filesToCache = [
   '/Game.html',
   '/style/styling.css',
   '/js/gameScript.js'
+  
 ];
 
 /* Cache contents when Offline See Cache */
