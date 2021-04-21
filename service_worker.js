@@ -1,4 +1,4 @@
-var cacheName = 'Simple Strat Game';
+var cacheName = 'simple-strat-game';
 var filesToCache = [
   '/',
   '/index.html',
