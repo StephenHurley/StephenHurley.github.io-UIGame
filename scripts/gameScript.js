@@ -105,7 +105,6 @@ var mrStache = new enemyEntity("Mr.Stache", enemyImage, mrStacheIconImage, 8, 8,
 var grunt = new enemyEntity("Grunt", enemyImage, enemyIconImage, 5, 5 , 5, 40)
 var lackey = new enemyEntity("Lacky", enemyImage, enemyIconImage, 3, 7, 8, 25)
 
-//var enemies = [enemy,grunt,lackey];
 var enemies = [mrStache, grunt, lackey];
 
  //game starts here

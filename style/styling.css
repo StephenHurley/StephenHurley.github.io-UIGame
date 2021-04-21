@@ -26,11 +26,9 @@ body
 #bodyButtonsTable
 {
 	float: right;
-	width: 20%;
 }
 #movementButtonsTable
 {
-	width: 80%;
 	float: left;
 }
 
