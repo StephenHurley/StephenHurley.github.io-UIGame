@@ -1,10 +1,10 @@
 var cacheName = 'simple-strat-game';
 var filesToCache = [
   '/',
-  '/index.html',
-  '/Game.html',
-  '/style/styling.css',
-  '/js/gameScript.js'
+  './index.html',
+  './Game.html',
+  './style/styling.css',
+  './js/gameScript.js'
   
 ];
 
